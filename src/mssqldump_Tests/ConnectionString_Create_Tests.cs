@@ -1,0 +1,62 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using mssqldump;
+using NUnit.Framework;
+using FluentAssertions;
+
+namespace mssqldump_Tests
+{
+
+	[TestFixture]
+	public class ConnectionString_Create_Tests
+	{
+
+		[Test]
+		public void Use_ConnectionString()
+		{
+			string expected = "$$connstring$$";
+
+			//act
+			var options = new TestOptions() {
+				ConnectionString = "$$connstring$$"
+			};
+
+			var cstring = ConnectionHelper.CreateConnectionString(options);
+
+			//assert
+			cstring.Should().Be(expected);
+		}
+
+		[Test]
+		public void Use_ConnectionString_From_Config()
+		{
+			string expected = "$$$connstring222$$$";
+
+			//act
+			var options = new TestOptions() {
+				ConnectionString = "key2",
+				ConfigFile = "App.config"
+			};
+
+			var cstring = ConnectionHelper.CreateConnectionString(options);
+
+			//assert
+			cstring.Should().Be(expected);
+		}
+
+		[Test]
+		public void Specific_Options()
+		{
+
+		}
+
+		private class TestOptions : BaseOptions
+		{
+
+		}
+
+	}
+}
