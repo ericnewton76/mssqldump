@@ -31,6 +31,25 @@ namespace mssqldump_Tests
 		}
 
 		[Test]
+		public void Use_IndividualValues()
+		{
+			string expectedStr = "Server=$$$server$$$;User ID=$username$;Database=$$database$$" ;
+			string[] expectedVals = expectedStr.Split(';');
+
+			//act
+			var testVals = new TestOptions() {
+				Server = "$$$server$$$",
+				LoginId = "$username$",
+				Database = "$$database$$"
+			};
+
+			var cstring = ConnectionHelper.CreateConnectionString(testVals);
+
+			//assert
+			cstring.Split(';').Should().BeEquivalentTo(expectedVals);
+		}
+
+		[Test]
 		public void Use_ConnectionString_From_Config()
 		{
 			string expected = "$$$connstring222$$$";
