@@ -1,13 +1,31 @@
-version: 1.0.{build}
+version: 0.0.{build}
 
 image: Visual Studio 2017
 shallow_clone: true
 
 before_build:
-- cmd: >-
+- cmd: |+
     cd src
-
     msbuild /t:Restore
+    cd ..
 
 build:
   verbosity: minimal
+
+after_build:
+- cmd: |+
+    cd Build 
+    build-choco.cmd 
+    cd ..
+
+artifacts:
+- path: '**/Release/choco/*.nupkg'
+  name: Choco-Nupkg
+
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: bupArXj8lz6RLLO8GPwyRnbGwcmyjg4MvmlBsYD8x+euC9YS5G5y9jaSPCpS7tsX
+  artifact: Choco-Nupkg
+  on:
+    APPVEYOR_REPO_TAG: true
