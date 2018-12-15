@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace mssqldump
 {
@@ -9,8 +10,35 @@ namespace mssqldump
 	{
 		public static string CreateConnectionString(BaseOptions options)
 		{
-			if(options.ConnectionString != null && options.ConfigFile == null)
-				return options.ConnectionString;
+			if(options.ConnectionString != null)
+			{
+				if(options.ConfigFile == null)
+					return options.ConnectionString;
+				else
+				{
+					XDocument xdoc = null;
+
+					using(var fs = System.IO.File.OpenRead(options.ConfigFile))
+					{
+						xdoc = XDocument.Load(fs);
+					}
+
+					XElement configurationEl = xdoc.Element("configuration");
+					if(configurationEl == null)
+						configurationEl = xdoc.Root;
+
+					XElement connectionStringsEl = configurationEl.Element("connectionStrings");
+
+					XElement connStrEl = connectionStringsEl.Elements("add")
+						.FirstOrDefault(_ => _.Attribute("name")?.Value == options.ConnectionString);
+
+					if(connStrEl != null)
+					{
+						var connStr = connStrEl.Attribute("connectionString")?.Value;
+						return connStr;
+					}
+				}
+			}
 
 			List<string> csb = new List<string>();
 

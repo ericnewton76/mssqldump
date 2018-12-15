@@ -35,10 +35,12 @@ namespace mssqldump_Tests
 		{
 			string expected = "$$$connstring222$$$";
 
+			string assemblyFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
 			//act
 			var options = new TestOptions() {
 				ConnectionString = "key2",
-				ConfigFile = "App.config"
+				ConfigFile = System.IO.Path.Combine(assemblyFolder, "App.config")
 			};
 
 			var cstring = ConnectionHelper.CreateConnectionString(options);
