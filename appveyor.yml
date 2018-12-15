@@ -26,13 +26,20 @@ after_build:
 
 artifacts:
 - path: '**/Release/choco/*.nupkg'
-  name: Choco-Nupkg
+  name: ChocoPackage
 
 deploy:
 - provider: GitHub
   tag: v$(APPVEYOR_BUILD_VERSION)
   auth_token:
     secure: bupArXj8lz6RLLO8GPwyRnbGwcmyjg4MvmlBsYD8x+euC9YS5G5y9jaSPCpS7tsX
-  artifact: Choco-Nupkg
+  artifact: ChocoPackage
+  on:
+    APPVEYOR_REPO_TAG: true
+- provider: NuGet
+  server: https://chocolatey.org/
+  api_key:
+    secure: q2DB10LN/by6AA8S1RL/Kq8MDO7ZdO3YDKctDIWNf/MT3k9apusTKqKR0YahRw0a
+  artifact: ChocoPackage
   on:
     APPVEYOR_REPO_TAG: true
