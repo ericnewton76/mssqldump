@@ -1,0 +1,13 @@
+version: 1.0.{build}
+
+image: Visual Studio 2017
+shallow_clone: true
+
+before_build:
+- cmd: >-
+    cd src
+
+    msbuild /t:Restore
+
+build:
+  verbosity: minimal
