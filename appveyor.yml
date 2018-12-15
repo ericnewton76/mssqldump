@@ -1,7 +1,13 @@
-version: 0.0.{build}
+version: 1.0.{build}
 
 image: Visual Studio 2017
 shallow_clone: true
+
+init:
+- ps: |+
+    if($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_TAG_NAME.StartsWith("v") -eq $true) {
+      Set-AppVeyorBuildVariable -Name APPVEYOR_BUILD_VERSION -Value $env:APPVEYOR_REPO_TAG_NAME.Substring(1)
+    }
 
 before_build:
 - cmd: |+
@@ -24,6 +30,7 @@ artifacts:
 
 deploy:
 - provider: GitHub
+  tag: v$(APPVEYOR_BUILD_VERSION)
   auth_token:
     secure: bupArXj8lz6RLLO8GPwyRnbGwcmyjg4MvmlBsYD8x+euC9YS5G5y9jaSPCpS7tsX
   artifact: Choco-Nupkg
